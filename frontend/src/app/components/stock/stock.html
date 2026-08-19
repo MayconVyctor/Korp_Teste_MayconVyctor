@@ -37,18 +37,22 @@
             <thead>
                 <tr>
                     <th>Code</th>
-                    <th>Name</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
+                    <th>description</th>
+                    <th>balance</th>
                 </tr>
             </thead>
             <tbody id="stock-table-body">
-                <!-- Stock items will be dynamically added here -->
+                 @for (product of products; track product.code) {
                  <tr>
-                    <td>PRD001</td>
-                    <td>Keyboard</td>
-                    <td>10</td>
-                    <td>$50.00</td>
+                    <td>{{ product.code }}</td>
+                    <td>{{ product.description }}</td>
+                    <td>{{ product.balance }}</td>
+                 </tr>
+                 } @empty {
+                    <tr>
+                     <td colspan="3" style="text-align: center;">No products found</td>
+                    </tr>
+                 }
             </tbody>
         </table>
     </section>
