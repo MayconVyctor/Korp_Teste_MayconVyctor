@@ -65,3 +65,38 @@ func (ir *InvoiceRepository) SaveInvoice(invoice models.Invoice) error {
 
 	return nil
 }
+
+// GetInvoiceByID busca uma nota fiscal e todos os seus itens atrelados
+func (ir *InvoiceRepository) GetInvoiceByID(id int) (models.Invoice, error) {
+	var invoice models.Invoice
+	invoice.ID = id
+	queryInvoice := "SELECT status FROM invoices WHERE id = $1"
+	err := ir.connection.QueryRow(queryInvoice, id).Scan(&invoice.Status)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return invoice, fmt.Errorf("invoice with ID %d not found", id)
+		}
+		return invoice, fmt.Errorf("failed to retrieve invoice header: %v", err)
+	}
+
+	queryItems := "SELECT id, product_code, quantity FROM invoice_items WHERE invoice_id = $1"
+	rows, err := ir.connection.Query(queryItems, id)
+	if err != nil {
+		return invoice, fmt.Errorf("failed to retrieve invoice items: %v", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var item models.InvoiceItem
+
+		if err := rows.Scan(&item.ID, &item.ProductCode, &item.Quantity); err != nil {
+			return invoice, fmt.Errorf("failed to scan item data: %v", err)
+		}
+
+		item.InvoiceID = id
+		invoice.Items = append(invoice.Items, item)
+	}
+
+	return invoice, nil
+}

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -49,4 +50,36 @@ func (hand *InvoiceHandler) CreateInvoice(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusCreated, gin.H{"message": "Invoice created successfully"})
+}
+
+func (h *InvoiceHandler) AnalyzeInvoiceHandler(ctx *gin.Context) {
+
+	idParam := ctx.Param("id")
+
+	invoiceID, err := strconv.Atoi(idParam)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid invoice ID format. Must be an integer."})
+		return
+	}
+
+	invoice, err := h.repo.GetInvoiceByID(invoiceID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	analysisText, err := clients.AnalyzeInvoice(invoice)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to analyze invoice with AI",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"invoice_id":  invoice.ID,
+		"status":      invoice.Status,
+		"ai_analysis": analysisText,
+	})
 }

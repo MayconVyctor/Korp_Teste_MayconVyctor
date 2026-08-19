@@ -29,6 +29,7 @@ func main() {
 	})
 
 	server.POST("/invoices", invoiceHandler.CreateInvoice)
+	server.GET("/invoices/:id/analysis", invoiceHandler.AnalyzeInvoiceHandler)
 
 	log.Println("Billing Service running on port 8082...")
 	server.Run(":8082")
