@@ -97,6 +97,9 @@ func (ir *InvoiceRepository) GetInvoiceByID(id int) (models.Invoice, error) {
 		item.InvoiceID = id
 		invoice.Items = append(invoice.Items, item)
 	}
+	if err := rows.Err(); err != nil {
+		return invoice, fmt.Errorf("error during iteration of invoice items: %v", err)
+	}
 
 	return invoice, nil
 }
