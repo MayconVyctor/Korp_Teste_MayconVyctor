@@ -10,17 +10,17 @@ func CheckProductExists(productCode string) error {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		return fmt.Errorf("falha de comunicação com o Inventory Service: %v", err)
+		return fmt.Errorf("failed to check product existence: %v", err)
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusNotFound {
-		return fmt.Errorf("produto %s não existe no estoque", productCode)
+		return fmt.Errorf("product %s does not exist in inventory", productCode)
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("erro inesperado do Inventory Service: status %d", resp.StatusCode)
+		return fmt.Errorf("unexpected error from Inventory Service: status %d", resp.StatusCode)
 	}
 
 	return nil
