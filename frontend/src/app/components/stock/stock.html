@@ -1,0 +1,55 @@
+<div class= "container">
+    <header class="header">
+        <h1>Stock</h1>
+        <p>Register and visualize stock available</p>
+    </header>
+
+    <section class="card form-section">
+        <h2>New Product</h2>
+        <form class="form-grid">
+            <div class="input-group">
+                <label for="code">Product Code</label>
+                <input type="text" id="code" placeholder="Ex: PRD001" autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label for="name">Product Name</label>
+                <input type="text" id="name" placeholder="Ex: Keyboard" autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label for="price">Quantity</label>
+                <input type="number" id="price" placeholder="0">
+            </div>
+
+            <div class="input-group">
+                <label for="quantity">Price</label>
+                <input type="number" id="quantity" placeholder="0.00">
+            </div>
+            
+            <button type="button" class="btn-primary">Save Product</button>
+        </form>
+    </section>
+
+    <section class="card table-section">
+        <h2>Registered Products</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody id="stock-table-body">
+                <!-- Stock items will be dynamically added here -->
+                 <tr>
+                    <td>PRD001</td>
+                    <td>Keyboard</td>
+                    <td>10</td>
+                    <td>$50.00</td>
+            </tbody>
+        </table>
+    </section>
+</div>
