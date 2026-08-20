@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	"github.com/MayconVyctor/Korp_Teste_MayconVyctor/inventory-service/db"
@@ -14,6 +15,7 @@ import (
 func main() {
 
 	server := gin.Default()
+	server.Use(cors.Default())
 
 	dbConnection, err := db.ConnectDB()
 	if err != nil {
