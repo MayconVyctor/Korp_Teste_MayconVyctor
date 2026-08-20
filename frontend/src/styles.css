@@ -37,7 +37,6 @@ body, html {
   color: #334155;
 }
 
-/* Inputs Globais */
 input {
   width: 100%;
   padding: 10px 12px;
@@ -53,7 +52,6 @@ input:focus {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* Tabelas Globais */
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -120,8 +118,8 @@ input:focus {
 }
 
 .btn-primary {
-  background-color: var(--primary-color);
-  color: white;
+  background-color: #2563eb;
+  color: rgb(255, 255, 255);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
@@ -132,7 +130,7 @@ input:focus {
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-hover);
+  background-color: #0f2a63;
 }
 
 .btn-primary:disabled {
