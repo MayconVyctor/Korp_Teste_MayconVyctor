@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -49,6 +50,14 @@ func (hand *InvoiceHandler) CreateInvoice(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error while saving the invoice"})
 		return
 	}
+
+	for _, item := range invoice.Items {
+		err := clients.PublishStockUpdate(item.ProductCode, item.Quantity)
+		if err != nil {
+			log.Println("Failed to publish stock update:", err)
+		}
+	}
+
 	ctx.JSON(http.StatusCreated, gin.H{"message": "Invoice created successfully"})
 }
 

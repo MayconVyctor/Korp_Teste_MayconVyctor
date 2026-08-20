@@ -10,9 +10,12 @@ import (
 	"github.com/MayconVyctor/Korp_Teste_MayconVyctor/inventory-service/db"
 	"github.com/MayconVyctor/Korp_Teste_MayconVyctor/inventory-service/handlers"
 	"github.com/MayconVyctor/Korp_Teste_MayconVyctor/inventory-service/repository"
+	"github.com/MayconVyctor/Korp_Teste_MayconVyctor/inventory-service/workers"
 )
 
 func main() {
+
+	go workers.StartStockConsumer()
 
 	server := gin.Default()
 	server.Use(cors.Default())
