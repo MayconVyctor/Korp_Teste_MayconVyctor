@@ -17,7 +17,14 @@
     
     <div class="input-group">
       <label for="ProductCode">Product Code</label>
-      <input type="text" id="ProductCode" formControlName="ProductCode" placeholder="Ex: PROD001" autocomplete="off">
+     <select id="ProductCode" formControlName="ProductCode">
+        <option value="" disabled selected>Select a product...</option>
+        @for (product of products; track product.code) {
+          <option [value]="product.code">
+            {{ product.code }} - {{ product.description }} (Stock: {{ product.balance }})
+          </option>
+        }
+      </select>
     </div>
 
     <div class="input-group">
@@ -38,6 +45,8 @@
         <th>Status</th>
         <th>Product Code</th>
         <th>Quantity</th>
+        <th>Actions</th>
+        <th>IA Action</th>
       </tr>
     </thead>
     <tbody>
@@ -45,16 +54,51 @@
         <tr>
           <td>#{{ invoice.id }}</td>
           
-          <td><span class="status-badge">{{ invoice.status }}</span></td>
+          <td>
+            <span class="status-badge" [class.open]="invoice.status === 'OPEN'" [class.closed]="invoice.status === 'CLOSED'">
+              {{ invoice.status }}
+            </span>
+          </td>
           
           <td>{{ invoice.items[0]?.product_code }}</td>
           <td>{{ invoice.items[0]?.quantity }}</td>
+          
+          <td>
+            @if (invoice.status === 'OPEN') {
+              <button class="btn-primary btn-print" (click)="printInvoice(invoice.id)" [disabled]="isPrintingId === invoice.id">
+                @if (isPrintingId === invoice.id) {
+                  Processing...
+                } @else {
+                  Print
+                }
+              </button>
+            } @else {
+              <span class="text-success-bold"> Closed</span>
+            }
+          </td>
+
+          <td>
+            <button class="btn-ai" (click)="analyzeWithAI(invoice.id)" [disabled]="isAnalyzing && analyzingId === invoice.id">
+              @if (isAnalyzing && analyzingId === invoice.id) {
+                Thinking
+              } @else {
+                Analyze with AI
+              }
+            </button>
+          </td>
         </tr>
       } @empty {
         <tr>
-          <td colspan="4" style="text-align: center;">No invoices generated yet</td>
+          <td colspan="6" class="text-center">No invoices generated yet</td>
         </tr>
       }
     </tbody>
   </table>
+
+  @if (aiAnalysisResult) {
+    <div class="ai-result-card">
+      <h3> IA Insights</h3>
+      <p>{{ aiAnalysisResult }}</p>
+    </div>
+  }
 </section>

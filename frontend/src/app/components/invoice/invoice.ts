@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { InvoiceService, Invoice as InvoiceModel } from '../../services/invoiceService';
+import { InvoiceService, Invoice as InvoiceModel, AiAnalysisResponse, Product } from '../../services/invoiceService';
 
 @Component({
   selector: 'app-invoice',
@@ -10,6 +10,7 @@ import { InvoiceService, Invoice as InvoiceModel } from '../../services/invoiceS
 })
 export class Invoice implements OnInit {
   invoices: InvoiceModel[] = [];
+  products: Product[] = [];
   successMessage: string = '';
   errorMessage: string = '';
 
@@ -18,6 +19,11 @@ export class Invoice implements OnInit {
     Quantity: new FormControl(1, [Validators.required, Validators.min(1)])
   });
 
+  aiAnalysisResult: string | null = null;
+  isAnalyzing: boolean = false;
+  analyzingId: number | null = null;
+  isPrintingId: number | null = null;
+
   constructor(
     private invoiceService: InvoiceService, 
     private cdRef: ChangeDetectorRef
@@ -25,6 +31,7 @@ export class Invoice implements OnInit {
 
   ngOnInit(): void {
     this.loadInvoices();
+    this.loadProducts()
   }
 
   loadInvoices(): void {
@@ -37,11 +44,21 @@ export class Invoice implements OnInit {
     });
   }
 
+  loadProducts(): void {
+    this.invoiceService.getProducts().subscribe({
+      next: (data: any) => {
+        this.products = data.products || data; 
+        this.cdRef.detectChanges();
+      },
+      error: (err) => console.error('Error fetching products:', err)
+    });
+  }
+
   onSubmit(): void {
     if (this.invoiceForm.valid) {
       const newInvoice: InvoiceModel = {
         id: 0,
-        status: 'PENDING', 
+        status: 'OPEN', 
         items: [
           {
             id: 0,
@@ -66,5 +83,49 @@ export class Invoice implements OnInit {
         }
       });
     }
+  }
+
+  printInvoice(id: number | undefined): void {
+    if (!id) return;
+    
+    this.isPrintingId = id;
+
+    this.invoiceService.printInvoice(id).subscribe({
+      next: () => {
+        this.loadInvoices();
+        this.isPrintingId = null;
+        this.cdRef.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error printing invoice:', err);
+        this.isPrintingId = null;
+        this.cdRef.detectChanges();
+      }
+    });
+
+  }
+
+  analyzeWithAI(id: number | undefined): void {
+    if (!id) return;
+
+    this.isAnalyzing = true;
+    this.analyzingId = id;
+    this.aiAnalysisResult = null;
+
+    this.invoiceService.analyzeInvoice(id).subscribe({
+      next: (res: AiAnalysisResponse) => {
+        this.aiAnalysisResult = res.ai_analysis;
+        this.isAnalyzing = false;
+        this.analyzingId = null;
+        this.cdRef.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error analyzing invoice:', err);
+        this.aiAnalysisResult = 'Error analyzing invoice.';
+        this.isAnalyzing = false;
+        this.analyzingId = null;
+        this.cdRef.detectChanges();
+      }
+    });
   }
 }
