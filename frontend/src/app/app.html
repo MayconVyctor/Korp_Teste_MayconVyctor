@@ -1,1 +1,13 @@
-<router-outlet></router-outlet>
+<nav class="main-nav">
+  <div class="nav-container">
+    <h2 class="logo">Korp App</h2>
+    <div class="nav-links">
+      <a routerLink="/stock" routerLinkActive="active" class="nav-item">Stock</a>
+      <a routerLink="/invoice" routerLinkActive="active" class="nav-item">Invoices</a>
+    </div>
+  </div>
+</nav>
+
+<main class="app-content">
+  <router-outlet></router-outlet>
+</main>
