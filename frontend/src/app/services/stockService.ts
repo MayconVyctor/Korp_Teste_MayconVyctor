@@ -19,4 +19,16 @@ export class StockService {
   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(this.apiUrl);
   }
+
+  createProduct(product: Product): Observable<Product> {
+    return this.http.post<Product>(this.apiUrl, product);
+  }
+
+  updateProduct(product: Product): Observable<Product> {
+    return this.http.put<Product>(`${this.apiUrl}/${product.code}`, product);
+  }
+
+  deleteProduct(code: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${code}`);
+  }
 }

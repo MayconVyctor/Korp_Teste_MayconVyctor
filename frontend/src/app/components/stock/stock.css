@@ -91,7 +91,12 @@
   background-color: var(--primary-hover);
 }
 
-/* Estilo da Tabela */
+.btn-primary:disabled {
+  background-color: #cbd5e1; 
+  color: #64748b;
+  cursor: not-allowed; 
+}
+
 .data-table {
   width: 100%;
   border-collapse: collapse;

@@ -6,28 +6,22 @@
 
     <section class="card form-section">
         <h2>New Product</h2>
-        <form class="form-grid">
+        <form class="form-grid" [formGroup]="productForm" (ngSubmit)="onSubmit()">
             <div class="input-group">
                 <label for="code">Product Code</label>
-                <input type="text" id="code" placeholder="Ex: PRD001" autocomplete="off">
-            </div>
-
-            <div class="input-group">
-                <label for="name">Product Name</label>
-                <input type="text" id="name" placeholder="Ex: Keyboard" autocomplete="off">
-            </div>
-
-            <div class="input-group">
-                <label for="price">Quantity</label>
-                <input type="number" id="price" placeholder="0">
-            </div>
-
-            <div class="input-group">
-                <label for="quantity">Price</label>
-                <input type="number" id="quantity" placeholder="0.00">
+                <input type="text" id="code" formControlName="code" placeholder="Ex: PRD004" autocomplete="off">
             </div>
             
-            <button type="button" class="btn-primary">Save Product</button>
+            <div class="input-group">
+                <label for="description">Product Description</label>
+                <input type="text" id="description" formControlName="description" placeholder="Ex: Keyboard" autocomplete="off">
+            </div>
+
+           <div class="input-group">
+                <label for="balance">Balance (Quantity)</label>
+                <input type="number" id="balance" formControlName="balance" placeholder="0">
+           </div>
+            <button type="submit" class="btn-primary" [disabled]="productForm.invalid">Save Product</button>
         </form>
     </section>
 
