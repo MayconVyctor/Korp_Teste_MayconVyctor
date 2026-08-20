@@ -13,6 +13,9 @@ export class Stock implements OnInit {
   
   products: Product[] = [];
 
+  successMessage: string = '';
+  errorMessage: string = '';
+
   productForm = new FormGroup({
     code: new FormControl('', Validators.required),
     description: new FormControl('', Validators.required),
@@ -43,15 +46,28 @@ export class Stock implements OnInit {
   onSubmit(): void {
     if (this.productForm.valid) {
       const newProduct = this.productForm.value as Product;
+
+      this.successMessage = '';
+      this.errorMessage = '';
       
       this.stockService.createProduct(newProduct).subscribe({
         next: (savedProduct) => {
-          console.log('Product saved:', savedProduct);
+          this.successMessage = 'Product saved successfully!';
           this.loadProducts();
-          this.productForm.reset({ balance: 0 }); 
+          this.productForm.reset({ balance: 0 });
+          console.log('Product saved:', savedProduct);
+          setTimeout(() => {
+            this.successMessage = '';
+            this.cdr.detectChanges();
+          }, 3000);
         },
-        error: (err) => {
-          console.error('Error saving the product:', err);
+       error: (err) => {
+          if (err.status === 500) {
+            this.errorMessage = 'Error this product code already exists.';
+          } else {
+            this.errorMessage = 'Server error while trying to save the product.';
+          }
+          this.cdr.detectChanges();
         }
       });
     }

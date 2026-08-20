@@ -6,6 +6,17 @@
 
     <section class="card form-section">
         <h2>New Product</h2>
+        @if (successMessage) {
+        <div class="alert alert-success">
+            {{ successMessage }}
+        </div>
+        }
+        @if (errorMessage) {
+        <div class="alert alert-error">
+            {{ errorMessage }}
+        </div>
+        }
+        
         <form class="form-grid" [formGroup]="productForm" (ngSubmit)="onSubmit()">
             <div class="input-group">
                 <label for="code">Product Code</label>
