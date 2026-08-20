@@ -1,1 +1,60 @@
-<p>invoice works!</p>
+<section class="content-header">
+  <h1>Billing & Invoices</h1>
+  <p>Issue and manage stock invoices</p>
+</section>
+
+@if (successMessage) {
+  <div class="alert alert-success">{{ successMessage }}</div>
+}
+@if (errorMessage) {
+  <div class="alert alert-error">{{ errorMessage }}</div>
+}
+
+<section class="card form-section">
+  <h2>Issue New Invoice</h2>
+  
+  <form class="form-grid" [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
+    
+    <div class="input-group">
+      <label for="ProductCode">Product Code</label>
+      <input type="text" id="ProductCode" formControlName="ProductCode" placeholder="Ex: PROD001" autocomplete="off">
+    </div>
+
+    <div class="input-group">
+      <label for="Quantity">Quantity</label>
+      <input type="number" id="Quantity" formControlName="Quantity" placeholder="1">
+    </div>
+
+    <button type="submit" class="btn-primary" [disabled]="invoiceForm.invalid">Issue Invoice</button>
+  </form>
+</section>
+
+<section class="card table-section">
+  <h2>Issued Invoices History</h2>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Invoice ID</th>
+        <th>Status</th>
+        <th>Product Code</th>
+        <th>Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (invoice of invoices; track invoice.id) {
+        <tr>
+          <td>#{{ invoice.id }}</td>
+          
+          <td><span class="status-badge">{{ invoice.status }}</span></td>
+          
+          <td>{{ invoice.items[0]?.productCode }}</td>
+          <td>{{ invoice.items[0]?.quantity }}</td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="4" style="text-align: center;">No invoices generated yet</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>
