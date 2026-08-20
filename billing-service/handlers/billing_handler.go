@@ -24,7 +24,7 @@ func (hand *InvoiceHandler) CreateInvoice(ctx *gin.Context) {
 	var invoice models.Invoice
 
 	if err := ctx.ShouldBindJSON(&invoice); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Formato de payload inválido"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid payload format"})
 		return
 	}
 
@@ -51,13 +51,6 @@ func (hand *InvoiceHandler) CreateInvoice(ctx *gin.Context) {
 		return
 	}
 
-	for _, item := range invoice.Items {
-		err := clients.PublishStockUpdate(item.ProductCode, item.Quantity)
-		if err != nil {
-			log.Println("Failed to publish stock update:", err)
-		}
-	}
-
 	ctx.JSON(http.StatusCreated, gin.H{"message": "Invoice created successfully"})
 }
 
@@ -71,7 +64,6 @@ func (h *InvoiceHandler) GetAllInvoices(ctx *gin.Context) {
 }
 
 func (h *InvoiceHandler) AnalyzeInvoiceHandler(ctx *gin.Context) {
-
 	idParam := ctx.Param("id")
 
 	invoiceID, err := strconv.Atoi(idParam)
@@ -100,4 +92,40 @@ func (h *InvoiceHandler) AnalyzeInvoiceHandler(ctx *gin.Context) {
 		"status":      invoice.Status,
 		"ai_analysis": analysisText,
 	})
+}
+
+func (h *InvoiceHandler) PrintInvoice(ctx *gin.Context) {
+	idParam := ctx.Param("id")
+
+	invoiceID, err := strconv.Atoi(idParam)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid invoice ID format"})
+		return
+	}
+
+	invoice, err := h.repo.GetInvoiceByID(invoiceID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Invoice not found"})
+		return
+	}
+
+	if invoice.Status != "OPEN" {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Only OPEN invoices can be printed"})
+		return
+	}
+
+	err = h.repo.UpdateInvoiceStatus(invoiceID, "CLOSED")
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update invoice status"})
+		return
+	}
+
+	for _, item := range invoice.Items {
+		err := clients.PublishStockUpdate(item.ProductCode, item.Quantity)
+		if err != nil {
+			log.Println("Failed to publish stock update:", err)
+		}
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Invoice printed and stock updated"})
 }

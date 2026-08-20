@@ -144,3 +144,22 @@ func (ir *InvoiceRepository) GetAllInvoices() ([]models.Invoice, error) {
 
 	return invoices, nil
 }
+
+func (ir *InvoiceRepository) UpdateInvoiceStatus(id int, status string) error {
+	updateQuery := "UPDATE invoices SET status = $1 WHERE id = $2"
+	result, err := ir.connection.Exec(updateQuery, status, id)
+	if err != nil {
+		return fmt.Errorf("failed to update invoice status: %v", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to retrieve rows affected: %v", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no invoice found with ID %d", id)
+	}
+
+	return nil
+}
