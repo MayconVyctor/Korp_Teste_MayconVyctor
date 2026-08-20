@@ -25,7 +25,7 @@
       <input type="number" id="Quantity" formControlName="Quantity" placeholder="1">
     </div>
 
-    <button type="submit" class="btn-primary" [disabled]="invoiceForm.invalid">Issue Invoice</button>
+    <button type="submit" class="btn-primary" [disabled]="invoiceForm.invalid">Issue New Invoice</button>
   </form>
 </section>
 
@@ -47,7 +47,7 @@
           
           <td><span class="status-badge">{{ invoice.status }}</span></td>
           
-          <td>{{ invoice.items[0]?.productCode }}</td>
+          <td>{{ invoice.items[0]?.product_code }}</td>
           <td>{{ invoice.items[0]?.quantity }}</td>
         </tr>
       } @empty {

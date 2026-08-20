@@ -9,9 +9,9 @@ export interface Invoice {
 }
 
 export interface InvoiceItem {
-  id: number;
-  invoiceId: number;
-  productCode: string;
+  id?: number;
+  invoice_id?: number;
+  product_code: string;
   quantity: number;
 }
 

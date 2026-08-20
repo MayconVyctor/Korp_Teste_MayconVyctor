@@ -33,7 +33,7 @@ export class Invoice implements OnInit {
         this.invoices = data.invoices;
         this.cdRef.detectChanges();
       },
-      error: (err) => console.error('Erro ao buscar notas:', err)
+      error: (err) => console.error('Error fetching invoices:', err)
     });
   }
 
@@ -45,8 +45,8 @@ export class Invoice implements OnInit {
         items: [
           {
             id: 0,
-            invoiceId: 0,
-            productCode: this.invoiceForm.value.ProductCode ?? '',
+            invoice_id: 0,
+            product_code: this.invoiceForm.value.ProductCode ?? '',
             quantity: this.invoiceForm.value.Quantity ?? 1
           }
         ]
@@ -54,13 +54,13 @@ export class Invoice implements OnInit {
 
       this.invoiceService.createInvoice(newInvoice).subscribe({
         next: () => {
-          this.successMessage = 'Nota fiscal gerada!';
+          this.successMessage = 'Invoice issued successfully!';
           this.invoiceForm.reset({ Quantity: 1 });
           this.loadInvoices();
           setTimeout(() => { this.successMessage = ''; this.cdRef.detectChanges(); }, 3000);
         },
         error: (err) => {
-          this.errorMessage = 'Erro ao emitir nota.';
+          this.errorMessage = 'Error issuing invoice.';
           console.error(err);
           this.cdRef.detectChanges();
         }
