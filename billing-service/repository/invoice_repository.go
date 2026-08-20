@@ -66,7 +66,6 @@ func (ir *InvoiceRepository) SaveInvoice(invoice models.Invoice) error {
 	return nil
 }
 
-// GetInvoiceByID busca uma nota fiscal e todos os seus itens atrelados
 func (ir *InvoiceRepository) GetInvoiceByID(id int) (models.Invoice, error) {
 	var invoice models.Invoice
 	invoice.ID = id
@@ -102,4 +101,46 @@ func (ir *InvoiceRepository) GetInvoiceByID(id int) (models.Invoice, error) {
 	}
 
 	return invoice, nil
+}
+func (ir *InvoiceRepository) GetAllInvoices() ([]models.Invoice, error) {
+	var invoices []models.Invoice
+
+	queryInvoices := "SELECT id, status FROM invoices"
+	rows, err := ir.connection.Query(queryInvoices)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve invoices: %v", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var invoice models.Invoice
+		if err := rows.Scan(&invoice.ID, &invoice.Status); err != nil {
+			return nil, fmt.Errorf("failed to scan invoice data: %v", err)
+		}
+
+		queryItems := "SELECT id, product_code, quantity FROM invoice_items WHERE invoice_id = $1"
+		rows, err := ir.connection.Query(queryItems, invoice.ID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to retrieve invoice items: %v", err)
+		}
+
+		for rows.Next() {
+			var item models.InvoiceItem
+			if err := rows.Scan(&item.ID, &item.ProductCode, &item.Quantity); err != nil {
+				rows.Close()
+				return nil, fmt.Errorf("failed to scan item data: %v", err)
+			}
+			item.InvoiceID = invoice.ID
+			invoice.Items = append(invoice.Items, item)
+		}
+		rows.Close()
+
+		invoices = append(invoices, invoice)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error during iteration of invoices: %v", err)
+	}
+
+	return invoices, nil
 }

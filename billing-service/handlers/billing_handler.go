@@ -52,6 +52,15 @@ func (hand *InvoiceHandler) CreateInvoice(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"message": "Invoice created successfully"})
 }
 
+func (h *InvoiceHandler) GetAllInvoices(ctx *gin.Context) {
+	invoices, err := h.repo.GetAllInvoices()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error while fetching invoices"})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"invoices": invoices})
+}
+
 func (h *InvoiceHandler) AnalyzeInvoiceHandler(ctx *gin.Context) {
 
 	idParam := ctx.Param("id")

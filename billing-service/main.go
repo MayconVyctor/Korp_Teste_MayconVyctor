@@ -3,12 +3,11 @@ package main
 import (
 	"log"
 
-	"github.com/gin-gonic/gin"
-
-	// Lembre-se de ajustar o caminho base de acordo com o seu go.mod
 	"github.com/MayconVyctor/Korp_Teste_MayconVyctor/billing-service/db"
 	"github.com/MayconVyctor/Korp_Teste_MayconVyctor/billing-service/handlers"
 	"github.com/MayconVyctor/Korp_Teste_MayconVyctor/billing-service/repository"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -23,11 +22,12 @@ func main() {
 	invoiceHandler := handlers.NewInvoiceHandler(invoiceRepo)
 
 	server := gin.Default()
+	server.Use(cors.Default())
 
 	server.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{"message": "Billing Service is alive!"})
 	})
-
+	server.GET("/invoices", invoiceHandler.GetAllInvoices)
 	server.POST("/invoices", invoiceHandler.CreateInvoice)
 	server.GET("/invoices/:id/analysis", invoiceHandler.AnalyzeInvoiceHandler)
 
