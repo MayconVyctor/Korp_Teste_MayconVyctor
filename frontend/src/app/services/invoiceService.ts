@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface Invoice {
-  id?: number;
-  status: string;
-  items: InvoiceItem[];
+export interface Product {
+  code: string;
+  description: string;
+  balance: number;
 }
 
 export interface InvoiceItem {
@@ -15,28 +15,44 @@ export interface InvoiceItem {
   quantity: number;
 }
 
+export interface Invoice {
+  id?: number;
+  status: string;
+  items: InvoiceItem[];
+}
+
+export interface AiAnalysisResponse {
+  invoice_id: number;
+  status: string;
+  ai_analysis: string;
+}
+
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class InvoiceService {
+  private billingUrl = 'http://localhost:8082/invoices';
+  private inventoryUrl = 'http://localhost:8081/products'; 
 
-  private apiUrl = 'http://localhost:8082/invoices';
   constructor(private http: HttpClient) {}
 
-  getInvoices(): Observable<Invoice[]> {
-    return this.http.get<Invoice[]>(this.apiUrl);
+  getProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(this.inventoryUrl);
   }
 
-  createInvoice(invoice: Invoice): Observable<Invoice> {
-    return this.http.post<Invoice>(this.apiUrl, invoice);
+  getInvoices(): Observable<any> {
+    return this.http.get<any>(this.billingUrl);
   }
 
-  updateInvoice(invoice: Invoice): Observable<Invoice> {
-    return this.http.put<Invoice>(`${this.apiUrl}/${invoice.id}`, invoice);
+  createInvoice(invoice: Invoice): Observable<any> {
+    return this.http.post<any>(this.billingUrl, invoice);
   }
 
-  deleteInvoice(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  analyzeInvoice(id: number): Observable<AiAnalysisResponse> {
+    return this.http.get<AiAnalysisResponse>(`${this.billingUrl}/${id}/analysis`);
   }
 
+  printInvoice(id: number): Observable<void> {
+    return this.http.put<void>(`${this.billingUrl}/${id}/print`, {});
+  }
 }
