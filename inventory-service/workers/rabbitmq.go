@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/MayconVyctor/Korp_Teste_MayconVyctor/inventory-service/repository"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -15,7 +16,7 @@ type StockUpdateMessage struct {
 	Quantity    int    `json:"quantity"`
 }
 
-func StartStockConsumer() {
+func StartStockConsumer(repo *repository.ProductRepository) {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	if err != nil {
 		log.Fatal("Failed to connect to RabbitMQ:", err)
@@ -59,12 +60,25 @@ func StartStockConsumer() {
 		for d := range msgs {
 			var message StockUpdateMessage
 			err := json.Unmarshal(d.Body, &message)
+
 			if err != nil {
 				log.Printf("Failed to unmarshal message: %v", err)
 				continue
 			}
 
 			log.Printf("Received stock update: ProductCode=%s, Quantity=%d", message.ProductCode, message.Quantity)
+			currentProduct, err := repo.GetProductByCode(message.ProductCode)
+			if err != nil {
+				log.Printf("Failed to get product by code: %v", err)
+				continue
+			}
+
+			newBalance := currentProduct.Balance + message.Quantity
+			err = repo.UpdateProductBalance(message.ProductCode, newBalance)
+			if err != nil {
+				log.Printf("Failed to update product balance: %v", err)
+				continue
+			}
 
 		}
 	}()

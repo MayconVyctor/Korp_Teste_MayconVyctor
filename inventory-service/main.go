@@ -15,8 +15,6 @@ import (
 
 func main() {
 
-	go workers.StartStockConsumer()
-
 	server := gin.Default()
 	server.Use(cors.Default())
 
@@ -27,6 +25,8 @@ func main() {
 
 	ProductRepository := repository.NewProductRepository(dbConnection)
 	ProductHandler := handlers.NewProductHandler(ProductRepository)
+
+	go workers.StartStockConsumer(ProductRepository)
 
 	ProductRepository.CreateProduct()
 

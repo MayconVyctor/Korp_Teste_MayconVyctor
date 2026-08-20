@@ -73,3 +73,13 @@ func (pr *ProductRepository) GetAllProducts() ([]models.Product, error) {
 
 	return products, nil
 }
+
+func (pr *ProductRepository) UpdateProductBalance(code string, newbalance int) error {
+	updateQuery := "UPDATE products SET balance = $1 WHERE code = $2"
+	_, err := pr.connection.Exec(updateQuery, newbalance, code)
+	if err != nil {
+		return fmt.Errorf("failed to update product balance: %v", err)
+	}
+
+	return nil
+}
