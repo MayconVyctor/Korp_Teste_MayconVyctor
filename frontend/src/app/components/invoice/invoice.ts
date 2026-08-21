@@ -72,7 +72,7 @@ export class Invoice implements OnInit {
       this.invoiceService.createInvoice(newInvoice).subscribe({
         next: () => {
           this.successMessage = 'Invoice issued successfully!';
-          this.invoiceForm.reset({ Quantity: 1 });
+          this.invoiceForm.reset({ Quantity: 1, ProductCode: '' });
           this.loadInvoices();
           setTimeout(() => { this.successMessage = ''; this.cdRef.detectChanges(); }, 6000);
         },
@@ -94,7 +94,8 @@ export class Invoice implements OnInit {
         next: () => {
           this.loadInvoices();
           this.isPrintingId = null;
-          this.cdRef.detectChanges();
+          this.successMessage = 'Invoicing successfully completed, inventory has been updated.';
+          setTimeout(() => { this.successMessage = ''; this.cdRef.detectChanges(); }, 5000);
         },
         error: (err) => {
           console.error('Error printing invoice:', err);
