@@ -53,16 +53,16 @@ Korp_Teste_MayconVyctor/
 ## Telas da Aplicação
 
 **Gestão de Estoque (Inventory)**
-![Tela de listagem e gerenciamento de estoque](assets/telaDeEstoque.png)
+![Tela de sistema web de estoque mostrando uma tabela de produtos cadastrados com código, descrição e saldo, em um layout administrativo limpo; o tom é funcional e organizado.](./assets/telaDeEstoque.png)
 
 **Emissão de Notas Fiscais (Billing & Invoices)**
-![Tela principal de emissão e histórico de notas fiscais](assets/telaDeNotaFiscal.png)
+![Tela de faturamento com formulário de emissão de nota fiscal e histórico de notas em uma interface web administrativa; o tom é organizado e de controle.](./assets/telaDeNotaFiscal.png)
 
 **Integração com Inteligência Artificial (Gemini AI)**
-![Tela exibindo insights e análises geradas por IA para a nota fiscal](assets/telaNotaFiscalIntegracaoAI.png)
+![Tela de análise de nota fiscal com insights gerados por inteligência artificial para uma nota específica, exibidos em uma interface administrativa web; o tom é informativo e analítico.](./assets/telaNotaFiscalIntegracaoAI.png)
 
 **Resiliência e Tolerância a Falhas (Erro 503)**
-![Alerta de erro 503 informando que o microsserviço de estoque está indisponível](assets/telaErro503.png)
+![Tela com alerta de erro 503 informando que o microsserviço de estoque está indisponível durante a emissão de uma nota, em uma interface web administrativa; o tom é de aviso e interrupção da operação.](./assets/telaErro503.png)
 
 ## Funcionalidades
 
