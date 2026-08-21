@@ -73,7 +73,7 @@ func StartStockConsumer(repo *repository.ProductRepository) {
 				continue
 			}
 
-			newBalance := currentProduct.Balance + message.Quantity
+			newBalance := currentProduct.Balance - message.Quantity
 			err = repo.UpdateProductBalance(message.ProductCode, newBalance)
 			if err != nil {
 				log.Printf("Failed to update product balance: %v", err)
