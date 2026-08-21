@@ -49,6 +49,21 @@ Korp_Teste_MayconVyctor/
                 │      porta 5432      │
                 └──────────────────────┘
 
+
+## Telas da Aplicação
+
+**Gestão de Estoque (Inventory)**
+![Tela de listagem e gerenciamento de estoque](assets/telaDeEstoque.png)
+
+**Emissão de Notas Fiscais (Billing & Invoices)**
+![Tela principal de emissão e histórico de notas fiscais](assets/telaDeNotaFiscal.png)
+
+**Integração com Inteligência Artificial (Gemini AI)**
+![Tela exibindo insights e análises geradas por IA para a nota fiscal](assets/telaNotaFiscalIntegracaoAI.png)
+
+**Resiliência e Tolerância a Falhas (Erro 503)**
+![Alerta de erro 503 informando que o microsserviço de estoque está indisponível](assets/telaErro503.png)
+
 ## Funcionalidades
 
 **Produtos (Estoque):**
