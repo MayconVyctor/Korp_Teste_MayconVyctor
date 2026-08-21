@@ -77,7 +77,7 @@ export class Invoice implements OnInit {
           setTimeout(() => { this.successMessage = ''; this.cdRef.detectChanges(); }, 6000);
         },
         error: (err) => {
-          this.errorMessage = 'Error issuing invoice.';
+          this.errorMessage = 'Error issuing invoice due to service failure.';
           console.error(err);
           this.cdRef.detectChanges();
         }
