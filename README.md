@@ -3,7 +3,7 @@
 Projeto desenvolvido para o teste prático de desenvolvimento, a aplicação permite o cadastro de produtos, gerenciamento de estoque e emissão de notas fiscais. O sistema foi desenhado sob uma arquitetura de microsserviços orientada a eventos. Ao fechar (imprimir) uma nota, o serviço de faturamento publica uma mensagem no RabbitMQ, e o serviço de estoque consome essa fila para realizar a baixa dos itens de forma assíncrona e resiliente.
 
 
-## 🚀 Tecnologias
+## Tecnologias
 
 * **Frontend:** Angular 17+ 
 * **Backend:** Go (Golang) com framework Gin
@@ -13,7 +13,7 @@ Projeto desenvolvido para o teste prático de desenvolvimento, a aplicação per
 * **Reatividade (RxJS):** Uso de Observables retornados pelo HttpClient do Angular
 * **UI/UX:** Não foi utilizada biblioteca de componentes visuais (como Bootstrap ou Material). A interface foi construída com HTML e CSS próprios e componentizados.
 
-## 🏗️ Estrutura e System Design
+##  System Design
 
 ```text
 Korp_Teste_MayconVyctor/
@@ -24,45 +24,41 @@ Korp_Teste_MayconVyctor/
 
 
 
-                ┌──────────────────────────┐
-                │   Frontend (Angular)     │
-                │   http://localhost:4200  │
-                └───────────┬──────────────┘
-                            │ HTTP / JSON
-            ┌───────────────┴───────────────┐
-            ▼                               ▼
-┌───────────────────────┐      ┌───────────────────────┐
-│  Serviço de Estoque   │◄─────┤ Serviço de Faturamento│
-│  Go  ·  porta 8081    │ HTTP │  Go  ·  porta 8082    │
-│                       │(Sync)│                       │
-│ - CRUD de produtos    │      │ - CRUD de notas       │
-│ - Controle de Saldos  │      │ - Integração IA Gemini│
-│ - Consome Fila Rabbit ├──────◄ - Publica Mensageria  │
-└───────────┬───────────┘Async └───────────┬───────────┘
-            │          (RabbitMQ)          │
-            │                              │
-            │      Banco de Dados          │
-            └──────────────┬───────────────┘
-                           ▼
-                ┌──────────────────────┐
-                │    PostgreSQL 16     │
-                │      porta 5432      │
-                └──────────────────────┘
-
+                         ┌───────────────────────────┐
+                         │        Angular Web        │
+                         │   http://localhost:4200   │
+                         └─────────────┬─────────────┘
+                                       │ HTTP / JSON
+                     ┌─────────────────┴─────────────────┐
+                     ▼                                   ▼
+  ┌─────────────────────────────┐     HTTP    ┌─────────────────────────────┐
+  │      Inventory Service      │◄────────────┤       Billing Service       │
+  │        Go · Port 8081       │    (Sync)   │        Go · Port 8082       │
+  │                             │             │                             │
+  │ - Product CRUD              │   RabbitMQ  │ - Invoice CRUD              │
+  │ - Stock Management          │◄────────────┤ - Gemini AI Insights        │
+  │ - Message Consumer          │   (Async)   │ - Message Publisher         │
+  └──────────────┬──────────────┘             └──────────────┬──────────────┘
+                 │                                           │
+                 ▼                                           ▼
+  ┌─────────────────────────────┐             ┌─────────────────────────────┐
+  │       korp_inventory        │             │        korp_billing         │
+  │       PostgreSQL 16         │             │        PostgreSQL 16        │
+  └─────────────────────────────┘             └─────────────────────────────┘
 
 ## Telas da Aplicação
 
 **Gestão de Estoque (Inventory)**
-![Tela de sistema web de estoque mostrando uma tabela de produtos cadastrados com código, descrição e saldo, em um layout administrativo limpo; o tom é funcional e organizado.](./assets/telaDeEstoque.png)
+![Tela de sistema web de estoque mostrando uma tabela de produtos cadastrados com código, descrição e saldo, em um layout administrativo limpo; o tom é funcional e organizado.(assets/telaDeEstoque.png)
 
 **Emissão de Notas Fiscais (Billing & Invoices)**
-![Tela de faturamento com formulário de emissão de nota fiscal e histórico de notas em uma interface web administrativa; o tom é organizado e de controle.](./assets/telaDeNotaFiscal.png)
+![Tela de faturamento com formulário de emissão de nota fiscal e histórico de notas em uma interface web administrativa; o tom é organizado e de controle.](assets/telaDeNotaFiscal.png)
 
 **Integração com Inteligência Artificial (Gemini AI)**
-![Tela de análise de nota fiscal com insights gerados por inteligência artificial para uma nota específica, exibidos em uma interface administrativa web; o tom é informativo e analítico.](./assets/telaNotaFiscalIntegracaoAI.png)
+![Tela de análise de nota fiscal com insights gerados por inteligência artificial para uma nota especifica, exibidos em uma interface administrativa web; o tom é informativo e analitico.](assets/telaNotaFiscalIntegracaoAI.png)
 
 **Resiliência e Tolerância a Falhas (Erro 503)**
-![Tela com alerta de erro 503 informando que o microsserviço de estoque está indisponível durante a emissão de uma nota, em uma interface web administrativa; o tom é de aviso e interrupção da operação.](./assets/telaErro503.png)
+![Tela com alerta de erro 503 informando que o microsserviço de estoque está indisponivel durante a emissão de uma nota, em uma interface web administrativa; o tom é de aviso e interrupção da operação.](assets/telaErro503.png)
 
 ## Funcionalidades
 
