@@ -18,12 +18,12 @@ func NewInvoiceRepository(db *sql.DB) *InvoiceRepository {
 
 func (ir *InvoiceRepository) CreateInvoice() {
 	createTableInvoiceQuery := "CREATE TABLE IF NOT EXISTS invoices (id SERIAL PRIMARY KEY, status VARCHAR(50) NOT NULL);"
+	createTableInvoiceItemQuery := "CREATE TABLE IF NOT EXISTS invoice_items (id SERIAL PRIMARY KEY, invoice_id INT REFERENCES invoices(id), product_code VARCHAR(50) NOT NULL, product_description VARCHAR(255) NOT NULL DEFAULT 'No description', quantity INT NOT NULL);"
 	_, err := ir.connection.Exec(createTableInvoiceQuery)
 	if err != nil {
 		log.Fatal("Failed to create invoices table:", err)
 	}
 
-	createTableInvoiceItemQuery := "CREATE TABLE IF NOT EXISTS invoice_items (id SERIAL PRIMARY KEY, invoice_id INT REFERENCES invoices(id), product_code VARCHAR(50) NOT NULL, quantity INT NOT NULL);"
 	_, err = ir.connection.Exec(createTableInvoiceItemQuery)
 	if err != nil {
 		log.Fatal("Failed to create invoice_items table:", err)
@@ -49,8 +49,8 @@ func (ir *InvoiceRepository) SaveInvoice(invoice models.Invoice) error {
 	}
 
 	for _, item := range invoice.Items {
-		insertInvoiceItemQuery := "INSERT INTO invoice_items (invoice_id, product_code, quantity) VALUES ($1, $2, $3)"
-		_, err := tx.Exec(insertInvoiceItemQuery, invoiceID, item.ProductCode, item.Quantity)
+		insertInvoiceItemQuery := "INSERT INTO invoice_items (invoice_id, product_code, product_description, quantity) VALUES ($1, $2, $3, $4)"
+		_, err := tx.Exec(insertInvoiceItemQuery, invoiceID, item.ProductCode, item.ProductDescription, item.Quantity)
 		if err != nil {
 			return fmt.Errorf("failed to insert invoice item into the database: %v", err)
 		}
@@ -79,7 +79,7 @@ func (ir *InvoiceRepository) GetInvoiceByID(id int) (models.Invoice, error) {
 		return invoice, fmt.Errorf("failed to retrieve invoice header: %v", err)
 	}
 
-	queryItems := "SELECT id, product_code, quantity FROM invoice_items WHERE invoice_id = $1"
+	queryItems := "SELECT id, product_code, product_description, quantity FROM invoice_items WHERE invoice_id = $1"
 	rows, err := ir.connection.Query(queryItems, id)
 	if err != nil {
 		return invoice, fmt.Errorf("failed to retrieve invoice items: %v", err)
@@ -89,7 +89,7 @@ func (ir *InvoiceRepository) GetInvoiceByID(id int) (models.Invoice, error) {
 	for rows.Next() {
 		var item models.InvoiceItem
 
-		if err := rows.Scan(&item.ID, &item.ProductCode, &item.Quantity); err != nil {
+		if err := rows.Scan(&item.ID, &item.ProductCode, &item.ProductDescription, &item.Quantity); err != nil {
 			return invoice, fmt.Errorf("failed to scan item data: %v", err)
 		}
 
@@ -118,7 +118,7 @@ func (ir *InvoiceRepository) GetAllInvoices() ([]models.Invoice, error) {
 			return nil, fmt.Errorf("failed to scan invoice data: %v", err)
 		}
 
-		queryItems := "SELECT id, product_code, quantity FROM invoice_items WHERE invoice_id = $1"
+		queryItems := "SELECT id, product_code, product_description, quantity FROM invoice_items WHERE invoice_id = $1"
 		rows, err := ir.connection.Query(queryItems, invoice.ID)
 		if err != nil {
 			return nil, fmt.Errorf("failed to retrieve invoice items: %v", err)
@@ -126,7 +126,7 @@ func (ir *InvoiceRepository) GetAllInvoices() ([]models.Invoice, error) {
 
 		for rows.Next() {
 			var item models.InvoiceItem
-			if err := rows.Scan(&item.ID, &item.ProductCode, &item.Quantity); err != nil {
+			if err := rows.Scan(&item.ID, &item.ProductCode, &item.ProductDescription, &item.Quantity); err != nil {
 				rows.Close()
 				return nil, fmt.Errorf("failed to scan item data: %v", err)
 			}
@@ -134,7 +134,6 @@ func (ir *InvoiceRepository) GetAllInvoices() ([]models.Invoice, error) {
 			invoice.Items = append(invoice.Items, item)
 		}
 		rows.Close()
-
 		if err := rows.Err(); err != nil {
 			return nil, fmt.Errorf("error occurred during row iteration: %v", err)
 		}

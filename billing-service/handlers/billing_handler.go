@@ -33,8 +33,8 @@ func (hand *InvoiceHandler) CreateInvoice(ctx *gin.Context) {
 		return
 	}
 
-	for _, item := range invoice.Items {
-		err := clients.CheckProductExists(item.ProductCode)
+	for i, item := range invoice.Items {
+		description, err := clients.CheckProductExists(item.ProductCode)
 
 		if err != nil {
 			ctx.JSON(http.StatusServiceUnavailable, gin.H{
@@ -43,6 +43,7 @@ func (hand *InvoiceHandler) CreateInvoice(ctx *gin.Context) {
 			})
 			return
 		}
+		invoice.Items[i].ProductDescription = description
 	}
 
 	err := hand.repo.SaveInvoice(invoice)
