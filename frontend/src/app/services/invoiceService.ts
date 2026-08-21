@@ -12,6 +12,7 @@ export interface InvoiceItem {
   id?: number;
   invoice_id?: number;
   product_code: string;
+  product_description?: string;
   quantity: number;
 }
 

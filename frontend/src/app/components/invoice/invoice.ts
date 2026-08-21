@@ -74,7 +74,7 @@ export class Invoice implements OnInit {
           this.successMessage = 'Invoice issued successfully!';
           this.invoiceForm.reset({ Quantity: 1 });
           this.loadInvoices();
-          setTimeout(() => { this.successMessage = ''; this.cdRef.detectChanges(); }, 3000);
+          setTimeout(() => { this.successMessage = ''; this.cdRef.detectChanges(); }, 6000);
         },
         error: (err) => {
           this.errorMessage = 'Error issuing invoice.';
@@ -85,47 +85,47 @@ export class Invoice implements OnInit {
     }
   }
 
-  printInvoice(id: number | undefined): void {
-    if (!id) return;
-    
-    this.isPrintingId = id;
+    printInvoice(id: number | undefined): void {
+      if (!id) return;
+      
+      this.isPrintingId = id;
 
-    this.invoiceService.printInvoice(id).subscribe({
-      next: () => {
-        this.loadInvoices();
-        this.isPrintingId = null;
-        this.cdRef.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error printing invoice:', err);
-        this.isPrintingId = null;
-        this.cdRef.detectChanges();
-      }
-    });
+      this.invoiceService.printInvoice(id).subscribe({
+        next: () => {
+          this.loadInvoices();
+          this.isPrintingId = null;
+          this.cdRef.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error printing invoice:', err);
+          this.isPrintingId = null;
+          this.cdRef.detectChanges();
+        }
+      });
 
-  }
+    }
 
-  analyzeWithAI(id: number | undefined): void {
-    if (!id) return;
+    analyzeWithAI(id: number | undefined): void {
+      if (!id) return;
 
-    this.isAnalyzing = true;
-    this.analyzingId = id;
-    this.aiAnalysisResult = null;
+      this.isAnalyzing = true;
+      this.analyzingId = id;
+      this.aiAnalysisResult = null;
 
-    this.invoiceService.analyzeInvoice(id).subscribe({
-      next: (res: AiAnalysisResponse) => {
-        this.aiAnalysisResult = res.ai_analysis;
-        this.isAnalyzing = false;
-        this.analyzingId = null;
-        this.cdRef.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error analyzing invoice:', err);
-        this.aiAnalysisResult = 'Error analyzing invoice.';
-        this.isAnalyzing = false;
-        this.analyzingId = null;
-        this.cdRef.detectChanges();
-      }
-    });
+      this.invoiceService.analyzeInvoice(id).subscribe({
+        next: (res: AiAnalysisResponse) => {
+          this.aiAnalysisResult = res.ai_analysis;
+          this.isAnalyzing = false;
+          this.analyzingId = null;
+          this.cdRef.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error analyzing invoice:', err);
+          this.aiAnalysisResult = 'Error analyzing invoice.';
+          this.isAnalyzing = false;
+          this.analyzingId = null;
+          this.cdRef.detectChanges();
+        }
+      });
   }
 }

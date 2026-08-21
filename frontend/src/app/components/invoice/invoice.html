@@ -44,6 +44,7 @@
         <th>Invoice ID</th>
         <th>Status</th>
         <th>Product Code</th>
+        <th>Product Description</th>
         <th>Quantity</th>
         <th>Actions</th>
         <th>IA Action</th>
@@ -61,6 +62,7 @@
           </td>
           
           <td>{{ invoice.items[0]?.product_code }}</td>
+          <td>{{ invoice.items[0]?.product_description }}</td>
           <td>{{ invoice.items[0]?.quantity }}</td>
           
           <td>
