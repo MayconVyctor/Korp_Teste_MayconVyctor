@@ -123,3 +123,9 @@ go run main.go
 
 O serviço inicia em http://localhost:8082.
 
+**4. frontend (em outro terminal)
+cd frontend
+npm install
+npm start
+
+O serviço inicia em http://localhost:4200.
