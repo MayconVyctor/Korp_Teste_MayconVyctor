@@ -135,6 +135,10 @@ func (ir *InvoiceRepository) GetAllInvoices() ([]models.Invoice, error) {
 		}
 		rows.Close()
 
+		if err := rows.Err(); err != nil {
+			return nil, fmt.Errorf("error occurred during row iteration: %v", err)
+		}
+
 		invoices = append(invoices, invoice)
 	}
 
