@@ -8,9 +8,15 @@ import (
 	"github.com/MayconVyctor/Korp_Teste_MayconVyctor/billing-service/repository"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	dbConn, err := db.ConnectDB()
 	if err != nil {
 		log.Fatal("Could not connect to billing database:", err)

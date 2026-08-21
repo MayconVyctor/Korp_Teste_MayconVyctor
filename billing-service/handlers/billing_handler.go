@@ -37,8 +37,8 @@ func (hand *InvoiceHandler) CreateInvoice(ctx *gin.Context) {
 		err := clients.CheckProductExists(item.ProductCode)
 
 		if err != nil {
-			ctx.JSON(http.StatusUnprocessableEntity, gin.H{
-				"error":   "Failed to validate product in inventory",
+			ctx.JSON(http.StatusServiceUnavailable, gin.H{
+				"error":   "Inventory Service is currently unavailable. Cannot issue invoice.",
 				"details": err.Error(),
 			})
 			return
