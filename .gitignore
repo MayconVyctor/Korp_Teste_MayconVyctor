@@ -1,0 +1,15 @@
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+.env
+*.env
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+go.work
